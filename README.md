@@ -1,16 +1,38 @@
-# VTON API (scaffold)
+# vton-api Kaggle-ready package
 
-## Overview
-This project is a scaffold for serving an IDM-VTON-based virtual try-on pipeline over HTTP using FastAPI. It expects you to clone IDM-VTON (or point to your own repo) and provide pretrained weights.
+This package contains a minimal FastAPI scaffold to run in a Kaggle notebook with a GPU (T4).
+It expects you to place the IDM-VTON repository and the pretrained weights into the `IDM-VTON` folder.
 
-I inspected the Virtual-try-on-evaluation repo (which used IDM-VTON + upscaler) to align this scaffold. :contentReference[oaicite:1]{index=1}
+## Folder layout (inside Kaggle working dir)
+/kaggle/working/vton-api/
+  app/
+    server.py
+    model.py
+    utils.py
+  run_api.sh
+  requirements.txt
 
-## Prerequisites
-- A machine with an NVIDIA GPU and NVIDIA Container Toolkit installed (for Docker with `--gpus all`). For dev you can use an RTX-class GPU; for production prefer A100/T4 depending on throughput. :contentReference[oaicite:2]{index=2}
-- Clone IDM-VTON repo and place it in `/path/to/IDM-VTON` (or any path); set the env var `IDM_VTON_REPO` when running.
-- Install required model weights as per IDM-VTON instructions.
+## Steps on Kaggle
+1. Create new Notebook, enable GPU (T4) and turn Internet ON.
+2. Upload this `vton-api-kaggle` folder into Files -> Upload.
+3. Install requirements:
+   ```
+   %cd /kaggle/working/vton-api
+   !pip install -r requirements.txt
+   ```
+4. Place IDM-VTON repo under:
+   `/kaggle/working/vton-api/IDM-VTON`
+   and model weights under:
+   `/kaggle/working/vton-api/models/IDM-VTON/model.ckpt`
+   You can upload or `git clone` the repo and `wget` weights from HuggingFace.
+5. Run the API + tunnel:
+   ```
+   %%bash
+   chmod +x run_api.sh
+   ./run_api.sh
+   ```
+6. Cloudflared will print a public URL. Use that to call `/health` and `/predict`.
 
-## Quick local run (without Docker)
-1. Clone this scaffold:
-   ```bash
-   git clone <this-scaffold> vton-api && cd vton-api
+## Notes
+- The provided `model.py` uses a subprocess adapter; update it to the real repo's inference entrypoint or import model functions for performance.
+- Kaggle sessions are ephemeral; download outputs if needed.

@@ -1,5 +1,3 @@
-fastapi==0.95.2
-uvicorn[standard]==0.22.0
-pillow==10.0.0
-torch>=2.0.0  # ensure compatible CUDA build in Docker image
-# Add other libs required by IDM-VTON or upscaler; keep this file aligned with the IDM repo's requirements.
+fastapi
+uvicorn
+pillow
