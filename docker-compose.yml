@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  api:
+    build: .
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - IDM_VTON_REPO=/models/IDM-VTON
+      - IDM_VTON_CHECKPOINT=/models/IDM-VTON/checkpoints/idm_checkpoint.pt
+    ports:
+      - "8080:8080"
+    volumes:
+      - /path/to/IDM-VTON:/models/IDM-VTON
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    command: uvicorn app.server:app --host 0.0.0.0 --port 8080
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
